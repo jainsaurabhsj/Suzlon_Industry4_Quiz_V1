@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0d3520">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Industry 4.0 Quiz — Suzlon Energy</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --G:#1a5c35;--GM:#217a45;--GL:#e6f4ec;--GXL:#f1faf4;
+  --GD:#0d3520;--GDD:#070e09;
+  --GOLD:#d4a017;--GOLDB:#fde68a;
+  --RED:#b91c1c;--REDL:#fdecea;
+  --AMB:#f59e0b;--AMBL:#fef3dc;
+  --INK:#1a1a18;--INK2:#3d3d38;--INK3:#72726a;--INK4:#a8a89e;
+  --SUR:#f4f3ef;--SUR2:#eceae4;--BOR:#dddbd2;--BOR2:#c8c6bc;
+  --CARD:#ffffff;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bot:env(safe-area-inset-bottom,0px);
+}
+html{font-size:16px}
+body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--SUR);color:var(--INK);min-height:100vh;overflow-x:hidden}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100vh;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{height:5px;background:rgba(0,0,0,.08)}
+.prog-fill{height:100%;background:var(--GOLD);transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* ── LANDING ── */
+#scrLand .hero{
+  background:linear-gradient(150deg,#070e09 0%,#0d3520 55%,#185c35 100%);
+  padding:calc(40px + var(--safe-top)) 24px 36px;
+  text-align:center;position:relative;overflow:hidden;
+}
+#scrLand .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(33,122,69,.2),transparent)}
+.hero-icon{font-size:54px;margin-bottom:14px;display:block;position:relative;z-index:1}
+.hero-title{font-size:clamp(22px,6vw,30px);font-weight:800;color:#fff;line-height:1.15;margin-bottom:8px;position:relative;z-index:1}
+.hero-title span{color:var(--GOLDB)}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.65);line-height:1.65;max-width:340px;margin:0 auto 22px;position:relative;z-index:1}
+.hero-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;position:relative;z-index:1}
+.chip{font-size:11.5px;font-weight:600;padding:5px 13px;border-radius:20px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.85)}
+.chip.g{background:rgba(33,122,69,.4);border-color:rgba(110,224,154,.3)}
+
+.reg-form{padding:22px 18px 32px}
+.reg-title{font-size:14.5px;font-weight:700;color:var(--G);margin-bottom:14px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--G);text-transform:uppercase;letter-spacing:.09em;margin-bottom:5px}
+.field input,.field select{
+  width:100%;border:1.5px solid var(--BOR);border-radius:10px;
+  padding:12px 14px;font-size:15px;color:var(--INK);
+  background:var(--CARD);-webkit-appearance:none;appearance:none;
+  font-family:inherit;transition:border-color .15s;
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--G)}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%2372726a'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.note{background:var(--GL);border:1px solid #b6dfc4;border-radius:10px;padding:12px 14px;font-size:13px;color:var(--G);line-height:1.6;margin-bottom:14px}
+.btn-start{
+  width:100%;background:var(--G);color:#fff;border:none;
+  border-radius:12px;padding:16px;font-size:16px;font-weight:700;
+  cursor:pointer;font-family:inherit;letter-spacing:.02em;
+  box-shadow:0 4px 14px rgba(26,92,53,.3);transition:all .15s;
+}
+.btn-start:active{transform:scale(.98);filter:brightness(.92)}
+
+/* ── NOT CONFIGURED BANNER ── */
+.config-warn{
+  background:#7c2d12;color:#fed7aa;
+  padding:10px 16px;font-size:12.5px;font-weight:500;
+  text-align:center;border-bottom:1px solid rgba(255,255,255,.1);
+  display:none;
+}
+
+/* ── QUIZ ── */
+.q-top{
+  background:var(--GD);
+  padding:calc(12px + var(--safe-top)) 18px 12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.q-counter{font-size:12px;font-weight:600;color:#86efac;letter-spacing:.06em}
+.q-domain-pill{font-size:10.5px;font-weight:500;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
+.q-card{background:var(--CARD);margin:12px 14px 10px;border-radius:16px;padding:20px 18px;border:1px solid var(--BOR);box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.q-text{font-size:15.5px;font-weight:600;color:var(--INK);line-height:1.55;margin-bottom:20px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--SUR);border:1.5px solid var(--BOR);border-radius:11px;
+  padding:13px 14px;cursor:pointer;
+  font-size:14px;color:var(--INK2);line-height:1.45;
+  text-align:left;width:100%;font-family:inherit;
+  transition:border-color .12s,background .12s;-webkit-appearance:none;
+}
+.opt.selected{border-color:var(--G);background:var(--GL)}
+.opt-badge{
+  flex:none;width:28px;height:28px;border-radius:8px;
+  background:var(--SUR2);border:1.5px solid var(--BOR);
+  font-size:11.5px;font-weight:700;color:var(--INK3);
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;transition:all .12s;flex-shrink:0;
+}
+.opt.selected .opt-badge{background:var(--G);color:#fff;border-color:var(--G)}
+.q-nav{display:flex;gap:10px;padding:0 14px 16px}
+.btn-prev-q{flex:none;width:48px;height:48px;background:var(--CARD);border:1.5px solid var(--BOR);border-radius:11px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--INK2)}
+.btn-next-q{flex:1;background:var(--G);color:#fff;border:none;border-radius:11px;height:48px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-prev-q:active,.btn-next-q:active{transform:scale(.98)}
+.dots-row{display:flex;flex-wrap:wrap;gap:5px;padding:2px 14px 14px}
+.dot{width:24px;height:6px;border-radius:3px;background:var(--BOR);cursor:pointer;transition:background .2s}
+.dot.done{background:var(--GM)}
+.dot.current{background:var(--GOLD)}
+
+/* ── REVIEW ── */
+.review-wrap{padding:16px 14px 32px}
+.rv-head{font-size:17px;font-weight:700;color:var(--INK);margin-bottom:6px}
+.rv-sub{font-size:13px;color:var(--INK3);margin-bottom:16px;line-height:1.5}
+.rv-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:18px}
+.rv-item{background:var(--SUR2);border:1.5px solid var(--BOR);border-radius:9px;padding:9px 4px;text-align:center;cursor:pointer;transition:all .15s}
+.rv-item.ok{background:var(--GL);border-color:var(--GM)}
+.rv-item.miss{background:var(--REDL);border-color:var(--RED)}
+.rv-qn{font-size:10.5px;font-weight:700;margin-bottom:2px;color:var(--INK3)}
+.rv-item.ok .rv-qn{color:var(--G)}.rv-item.miss .rv-qn{color:var(--RED)}
+.rv-ans{font-size:16px;font-weight:800}
+.rv-item.ok .rv-ans{color:var(--G)}.rv-item.miss .rv-ans{color:var(--RED)}
+.warn-strip{background:var(--REDL);border:1px solid var(--RED);border-radius:9px;padding:11px 14px;font-size:13px;color:var(--RED);margin-bottom:16px;display:none}
+.btn-submit{width:100%;background:var(--G);color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(26,92,53,.3);margin-bottom:10px}
+.btn-back-q{width:100%;background:transparent;color:var(--G);border:2px solid var(--G);border-radius:12px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+
+/* ── SUBMITTING ── */
+#scrSubmit{background:var(--GD);display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+#scrSubmit.active{display:flex}
+.spinner{width:46px;height:46px;border:4px solid rgba(255,255,255,.15);border-top-color:#6ee09a;border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.submit-text{color:rgba(255,255,255,.8);font-size:15px}
+
+/* ── THANK YOU ── */
+#scrThank{background:linear-gradient(150deg,#070e09,#0d3520 60%,#185c35);min-height:100vh;display:none;align-items:center;justify-content:center;flex-direction:column;padding:40px 28px;text-align:center}
+#scrThank.active{display:flex}
+.ty-icon{font-size:72px;margin-bottom:20px;line-height:1}
+.ty-title{font-size:28px;font-weight:800;color:#fff;margin-bottom:10px;line-height:1.2}
+.ty-name{font-size:16px;color:var(--GOLDB);font-weight:600;margin-bottom:20px}
+.ty-msg{font-size:15px;color:rgba(255,255,255,.7);line-height:1.75;max-width:320px;margin-bottom:28px}
+.ty-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:14px 20px;margin-bottom:8px}
+.ty-badge-icon{font-size:28px}
+.ty-badge-text{text-align:left}
+.ty-badge-top{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.ty-badge-val{font-size:16px;font-weight:700;color:#fff}
+.ty-info{font-size:12.5px;color:rgba(255,255,255,.4);margin-top:20px;line-height:1.65}
+.ty-dots{display:flex;gap:6px;justify-content:center;margin-top:24px}
+.ty-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2)}
+.ty-dot.a{background:#6ee09a;animation:dotPulse 1.5s infinite}
+.ty-dot.b{background:#6ee09a;animation:dotPulse 1.5s .3s infinite}
+.ty-dot.c{background:#6ee09a;animation:dotPulse 1.5s .6s infinite}
+@keyframes dotPulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── ERROR ── */
+#scrError{background:var(--GD);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:40px 28px;text-align:center}
+#scrError.active{display:flex}
+.err-icon{font-size:48px}
+.err-title{font-size:20px;font-weight:700;color:#fff}
+.err-msg{font-size:14px;color:rgba(255,255,255,.6);line-height:1.65;max-width:300px}
+.btn-retry{background:var(--G);color:#fff;border:none;border-radius:10px;padding:13px 28px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:6px}
+
+/* ── ADMIN GATE ── */
+#scrAdminGate{background:var(--GDD);display:none;align-items:center;justify-content:center;flex-direction:column;padding:32px 24px;text-align:center}
+#scrAdminGate.active{display:flex}
+.gate-icon{font-size:40px;margin-bottom:14px}
+.gate-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px}
+.gate-sub{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:22px}
+.pass-inp{width:100%;max-width:280px;border:1.5px solid rgba(255,255,255,.2);border-radius:10px;padding:13px 16px;font-size:16px;color:#fff;background:rgba(255,255,255,.08);letter-spacing:.15em;text-align:center;font-family:inherit}
+.pass-inp::placeholder{color:rgba(255,255,255,.25);letter-spacing:0}
+.pass-inp:focus{outline:none;border-color:var(--GM)}
+.gate-btn{margin-top:10px;width:100%;max-width:280px;background:var(--G);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.gate-err{color:#fca5a5;font-size:13px;margin-top:8px;display:none}
+
+/* ── ADMIN DASHBOARD ── */
+#scrAdmin{display:none}
+#scrAdmin.active{display:block}
+.adm-hdr{background:var(--GD);padding:calc(14px + var(--safe-top)) 18px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.adm-hdr-l .eyebrow{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#fca5a5;font-weight:600;margin-bottom:3px}
+.adm-hdr-l .t{font-size:16px;font-weight:700;color:#fff}
+.adm-btns{display:flex;gap:8px}
+.btn-sm{padding:7px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.b-ref{background:rgba(255,255,255,.12);color:#fff}
+.b-exp{background:var(--GM);color:#fff}
+.b-del{background:rgba(185,28,28,.3);color:#fca5a5;border:1px solid rgba(185,28,28,.35)}
+
+.adm-body{padding:14px}
+.stat-g{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px}
+.sc{background:var(--CARD);border:1px solid var(--BOR);border-radius:12px;padding:13px;text-align:center}
+.sc-n{font-size:26px;font-weight:800;line-height:1;margin-bottom:3px}
+.sc-l{font-size:10px;color:var(--INK3);text-transform:uppercase;letter-spacing:.07em}
+.cn-tot{color:var(--G)}.cn-avg{color:#0d5fa8}.cn-gol{color:#b8860b}
+.cn-sil{color:#556677}.cn-bro{color:#a05020}.cn-tra{color:var(--RED)}
+
+.sec-hdr{font-size:13.5px;font-weight:700;color:var(--INK);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ldot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:lp 1.5s infinite;flex:none}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.3}}
+
+.lb-list{display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
+.lb-card{background:var(--CARD);border:1px solid var(--BOR);border-radius:12px;padding:13px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
+.lb-card:active{border-color:var(--GM)}
+.lb-rank{font-size:20px;flex:none;width:30px;text-align:center}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-weight:700;font-size:14px;color:var(--INK);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-dept{font-size:11.5px;color:var(--INK3);margin-top:1px}
+.lb-right{text-align:right;flex:none}
+.lb-score{font-size:20px;font-weight:800;color:var(--G)}
+.lb-meta{font-size:11px;color:var(--INK3)}
+.lb-aw{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-top:3px;display:inline-block}
+.ag{background:var(--GOLDB);color:#7a4f00}
+.as{background:#e2e8f0;color:#334155}
+.ab{background:#fed7aa;color:#7c2d12}
+.al{background:var(--REDL);color:var(--RED)}
+
+.dom-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.dl-row{}
+.dl-top{display:flex;justify-content:space-between;font-size:12.5px;color:var(--INK2);margin-bottom:5px}
+.dl-bar{height:7px;background:var(--SUR2);border-radius:4px;overflow:hidden}
+.dl-fill{height:100%;border-radius:4px;transition:width 1s ease}
+
+.empty{text-align:center;padding:40px 20px}
+.empty-i{font-size:40px;margin-bottom:10px;display:block}
+.empty h3{font-size:16px;color:var(--INK);margin-bottom:5px}
+.empty p{font-size:13px;color:var(--INK3);line-height:1.65}
+
+/* ── WINNERS ── */
+#scrWinners{display:none}
+#scrWinners.active{display:block}
+.win-body{padding:16px 14px calc(80px + var(--safe-bot))}
+
+/* ── BOTTOM NAV ── */
+.bot-nav{position:fixed;bottom:0;left:0;right:0;background:var(--CARD);border-top:1px solid var(--BOR);display:none;padding-bottom:var(--safe-bot);z-index:150}
+.bot-nav.show{display:flex}
+.bn{flex:1;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font-size:10px;color:var(--INK3);font-weight:500;border:none;background:transparent;font-family:inherit}
+.bn.active{color:var(--G)}
+.bn-ic{font-size:20px;line-height:1}
+
+/* ── MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:flex-end}
+.modal-bg.open{display:flex}
+.modal{background:var(--CARD);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;padding:20px}
+.modal-drag{width:40px;height:4px;background:var(--BOR2);border-radius:2px;margin:0 auto 14px}
+.modal-nm{font-size:16px;font-weight:700;color:var(--INK);margin-bottom:2px}
+.modal-sb{font-size:12.5px;color:var(--INK3);margin-bottom:14px}
+.ag-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.ag-cell{border-radius:8px;padding:8px 4px;text-align:center;border:1.5px solid var(--BOR)}
+.ag-cell.c{background:var(--GL);border-color:var(--GM)}
+.ag-cell.w{background:var(--REDL);border-color:var(--RED)}
+.ag-qn{font-size:10px;color:var(--INK4);margin-bottom:1px;font-weight:600}
+.ag-cell.c .ag-qn{color:var(--GM)}.ag-cell.w .ag-qn{color:var(--RED)}
+.ag-gv{font-size:15px;font-weight:800}
+.ag-cell.c .ag-gv{color:var(--G)}.ag-cell.w .ag-gv{color:var(--RED)}
+.ag-ck{font-size:9px;color:var(--INK4);margin-top:1px}
+.ag-cell.w .ag-ck{color:var(--RED);font-weight:600}
+.modal-close{width:100%;padding:12px;background:var(--SUR2);border:1px solid var(--BOR);border-radius:10px;cursor:pointer;font-size:14px;color:var(--INK2);font-family:inherit;margin-top:14px}
+
+@media(min-width:600px){
+  .screen,.bot-nav{max-width:480px;margin-left:auto;margin-right:auto}
+  .bot-nav{left:50%;right:auto;transform:translateX(-50%);border-left:1px solid var(--BOR);border-right:1px solid var(--BOR)}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ CONFIG BANNER (shown if script URL not set) ══════════ -->
+<div class="config-warn" id="configWarn">
+  ⚠ SETUP NEEDED: Replace https://script.google.com/macros/s/AKfycbzTT7qae13-YsDNLpba_IJiteTv1ZfT3y3Qfwjh81nT12dMKLyFjcNbcBRS2RD_l06uyw/exec in this file with your Apps Script URL. See setup guide.
+</div>
+
+<!-- ══ LANDING ════════════════════════════════════════════════ -->
+<div class="screen active" id="scrLand">
+  <div class="hero">
+    <span class="hero-icon">🌬️</span>
+    <h1 class="hero-title">Industry 4.0<br><span>Digital Readiness Quiz</span></h1>
+    <p class="hero-sub">Test your knowledge of the technologies shaping Suzlon's smart manufacturing future.</p>
+    <div class="hero-chips">
+      <span class="chip g">Suzlon Energy</span>
+      <span class="chip">20 Questions</span>
+      <span class="chip">15 Minutes</span>
+      <span class="chip">Top 3 Winners 🏆</span>
+    </div>
+  </div>
+  <div class="reg-form">
+    <p class="reg-title">Enter your details to begin</p>
+    <div class="note">📋 Complete all 20 questions and tap Submit. Results will be announced by the facilitator — good luck!</div>
+    <div class="field">
+      <label>Full Name *</label>
+      <input type="text" id="fName" placeholder="Enter your full name" autocomplete="name" inputmode="text">
+    </div>
+    <div class="field">
+      <label>Employee ID *</label>
+      <input type="text" id="fEmpId" placeholder="e.g. SUZ12345" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Function / Department *</label>
+      <select id="fDept">
+        <option value="">Select your function</option>
+        <option>Nacelle Assembly</option>
+        <option>Blade Manufacturing</option>
+        <option>Tower Fabrication</option>
+        <option>Quality</option>
+        <option>Maintenance</option>
+        <option>Production Planning</option>
+        <option>Engineering</option>
+        <option>IT / Digital</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Plant Location</label>
+      <input type="text" id="fPlant" placeholder="e.g. Pondicherry, Rajkot…" autocomplete="off">
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Begin Quiz →</button>
+  </div>
+</div>
+
+<!-- ══ QUIZ ════════════════════════════════════════════════════ -->
+<div class="screen" id="scrQuiz">
+  <div class="prog-wrap"><div class="prog-fill" id="qProg" style="width:0%"></div></div>
+  <div class="q-top">
+    <span class="q-counter" id="qCtr">1 / 20</span>
+    <span class="q-domain-pill" id="qDom"></span>
+  </div>
+  <div class="q-card">
+    <div class="q-text" id="qTxt"></div>
+    <div class="opts" id="qOpts"></div>
+  </div>
+  <div class="q-nav">
+    <button class="btn-prev-q" id="btnPrev" onclick="prevQ()">‹</button>
+    <button class="btn-next-q" id="btnNext" onclick="nextQ()">Next →</button>
+  </div>
+  <div class="dots-row" id="dotsRow"></div>
+</div>
+
+<!-- ══ REVIEW ══════════════════════════════════════════════════ -->
+<div class="screen" id="scrReview">
+  <div class="prog-wrap"><div class="prog-fill" style="width:100%"></div></div>
+  <div style="background:var(--GD);padding:12px 18px">
+    <div style="font-size:12px;font-weight:600;color:#86efac;letter-spacing:.06em">STEP 3 OF 3 · REVIEW</div>
+  </div>
+  <div class="review-wrap">
+    <div class="rv-head">Review Your Answers</div>
+    <div class="rv-sub">Tap any box to go back and change your answer</div>
+    <div class="warn-strip" id="warnStrip"></div>
+    <div class="rv-grid" id="rvGrid"></div>
+    <button class="btn-submit" onclick="doSubmit()">Submit Answers ✓</button>
+    <button class="btn-back-q" onclick="goToQ(curQ)">← Back to Questions</button>
+  </div>
+</div>
+
+<!-- ══ SUBMITTING ══════════════════════════════════════════════ -->
+<div class="screen" id="scrSubmit">
+  <div class="spinner"></div>
+  <div class="submit-text">Submitting your answers…</div>
+</div>
+
+<!-- ══ THANK YOU ═══════════════════════════════════════════════ -->
+<div class="screen" id="scrThank">
+  <div class="ty-icon">✅</div>
+  <h2 class="ty-title">Submitted!</h2>
+  <div class="ty-name" id="tyName"></div>
+  <p class="ty-msg">Your answers have been recorded. The facilitator will review all responses and announce the Top 3 winners shortly. Stay tuned!</p>
+  <div class="ty-badge">
+    <div class="ty-badge-icon">🏆</div>
+    <div class="ty-badge-text">
+      <div class="ty-badge-top">Winners announced by</div>
+      <div class="ty-badge-val">Session Facilitator</div>
+    </div>
+  </div>
+  <div class="ty-info">Please keep your phone available in case the facilitator needs to verify your details.</div>
+  <div class="ty-dots"><div class="ty-dot a"></div><div class="ty-dot b"></div><div class="ty-dot c"></div></div>
+</div>
+
+<!-- ══ ERROR ════════════════════════════════════════════════════ -->
+<div class="screen" id="scrError">
+  <div class="err-icon">⚠️</div>
+  <div class="err-title">Submission Failed</div>
+  <div class="err-msg" id="errMsg">Could not connect to the server. Please check your internet connection and try again.</div>
+  <button class="btn-retry" onclick="retrySubmit()">Try Again</button>
+</div>
+
+<!-- ══ ADMIN GATE ═══════════════════════════════════════════════ -->
+<div class="screen" id="scrAdminGate">
+  <div class="gate-icon">🔒</div>
+  <h2 class="gate-title">Admin Access</h2>
+  <p class="gate-sub">Facilitator use only</p>
+  <input type="password" class="pass-inp" id="passInp" placeholder="Password" onkeydown="if(event.key==='Enter')checkPass()">
+  <button class="gate-btn" onclick="checkPass()">Enter →</button>
+  <div class="gate-err" id="gateErr">Wrong password. Try again.</div>
+</div>
+
+<!-- ══ ADMIN DASHBOARD ══════════════════════════════════════════ -->
+<div class="screen" id="scrAdmin">
+  <div class="adm-hdr">
+    <div class="adm-hdr-l">
+      <div class="eyebrow">⚠ Facilitator Only</div>
+      <div class="t">Live Results <span id="aUpd" style="font-size:11px;font-weight:400;color:rgba(255,255,255,.4)"></span></div>
+    </div>
+    <div class="adm-btns">
+      <button class="btn-sm b-ref" onclick="adminLoad()">↻ Refresh</button>
+      <button class="btn-sm b-exp" onclick="exportCSV()">CSV</button>
+      <button class="btn-sm b-del" onclick="clearSheet()">Clear</button>
+    </div>
+  </div>
+  <div class="adm-body">
+    <div class="stat-g">
+      <div class="sc"><div class="sc-n cn-tot" id="aSub">0</div><div class="sc-l">Submitted</div></div>
+      <div class="sc"><div class="sc-n cn-avg" id="aAvg">—</div><div class="sc-l">Avg Score</div></div>
+      <div class="sc"><div class="sc-n cn-gol" id="aGold">0</div><div class="sc-l">🥇 Gold</div></div>
+      <div class="sc"><div class="sc-n cn-sil" id="aSilver">0</div><div class="sc-l">🥈 Silver</div></div>
+      <div class="sc"><div class="sc-n cn-bro" id="aBronze">0</div><div class="sc-l">🥉 Bronze</div></div>
+      <div class="sc"><div class="sc-n cn-tra" id="aTrain">0</div><div class="sc-l">📚 Training</div></div>
+    </div>
+    <div class="sec-hdr"><div class="ldot"></div>Leaderboard</div>
+    <div class="lb-list" id="lbList"></div>
+    <div class="sec-hdr">Average Score by Topic</div>
+    <div class="dom-list" id="domList"></div>
+  </div>
+  <div style="height:72px"></div>
+</div>
+
+<!-- ══ WINNERS PODIUM ═══════════════════════════════════════════ -->
+<div class="screen" id="scrWinners">
+  <div class="adm-hdr">
+    <div class="adm-hdr-l">
+      <div class="eyebrow">Announcement Ready</div>
+      <div class="t">🏆 Top 3 Winners</div>
+    </div>
+    <div class="adm-btns">
+      <button class="btn-sm b-ref" onclick="adminLoad()">↻</button>
+    </div>
+  </div>
+  <div class="win-body" id="winBody"></div>
+</div>
+
+<!-- ══ BOTTOM NAV (admin only) ══════════════════════════════════ -->
+<div class="bot-nav" id="botNav">
+  <button class="bn active" id="bnResults" onclick="switchTab('results')">
+    <span class="bn-ic">📊</span>Results
+  </button>
+  <button class="bn" id="bnWinners" onclick="switchTab('winners')">
+    <span class="bn-ic">🏆</span>Winners
+  </button>
+</div>
+
+<!-- ══ DETAIL MODAL ════════════════════════════════════════════ -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-nm" id="mNm"></div>
+    <div class="modal-sb" id="mSb"></div>
+    <div style="font-size:10.5px;font-weight:700;color:var(--G);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px">Answer Breakdown</div>
+    <div class="ag-grid" id="mGrid"></div>
+    <button class="modal-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  CONFIGURATION — CHANGE THIS BEFORE GOING LIVE              ║
+// ╚══════════════════════════════════════════════════════════════╝
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTT7qae13-YsDNLpba_IJiteTv1ZfT3y3Qfwjh81nT12dMKLyFjcNbcBRS2RD_l06uyw/exec'; // ← Replace with your Apps Script URL
+const ADMIN_PASS = '4suzlon';            // ← Change to your preferred password
+const SHEET_PASS = 'adminsuzlon';        // ← Sheet read password (set same in Apps Script)
+
+// ── QUESTIONS ────────────────────────────────────────────────────────────
+const QS = [
+  {id:1,d:"Industry 4.0",q:"What is the best simple definition of Industry 4.0?",o:["Using electricity to power factory machines","Machines that are connected, share data, and help make better decisions automatically","Replacing all workers with robots","Installing computers in offices"],a:"B"},
+  {id:2,d:"Industry 4.0",q:"Which industrial revolution introduced the assembly line and mass production?",o:["Industry 1.0","Industry 2.0","Industry 3.0","Industry 4.0"],a:"B"},
+  {id:3,d:"Digitization vs Digitalization",q:"A supervisor scans a paper inspection checklist and saves it as a PDF. This is an example of:",o:["Digital Transformation","Digitalization","Digitization","Automation"],a:"C"},
+  {id:4,d:"IoT & Sensors",q:"What is the main purpose of placing a vibration sensor on a blade infusion pump?",o:["To make the pump run faster","To measure and transmit pump health data in real time","To replace the pump operator","To count blades produced"],a:"B"},
+  {id:5,d:"IoT & Sensors",q:"A blade cure temperature sensor sends an alert at 2 AM showing temperature out of spec. What is the KEY benefit?",o:["The operator can check it in the morning","The supervisor is alerted immediately and can act before the blade is ruined","The machine automatically shuts down permanently","Data is stored for monthly reports only"],a:"B"},
+  {id:6,d:"OEE & Dashboards",q:"OEE stands for:",o:["Overall Equipment Effectiveness","Output Efficiency Estimate","Operational Error Evaluation","Online Equipment Engineering"],a:"A"},
+  {id:7,d:"OEE & Dashboards",q:"OEE is calculated as:",o:["Output divided by Input","Availability + Performance + Quality","Availability × Performance × Quality","Speed × Uptime"],a:"C"},
+  {id:8,d:"OEE & Dashboards",q:"Line 3 shows 68% OEE vs. a target of 82%. The loss waterfall shows 74% of the gap is 'waiting' at the hub station. What should the supervisor do FIRST?",o:["Wait for the weekly review meeting","Investigate the waiting cause at the hub station immediately","Reduce the OEE target to 68%","Shut down the entire line"],a:"B"},
+  {id:9,d:"AI & Machine Learning",q:"An AI model sends an alert: 'Bearing distress — recommend replacement within 72 hours.' What should maintenance do?",o:["Ignore it — only trust physical inspection","Wait until the gearbox actually fails","Plan a scheduled bearing replacement within 72 hours","Replace all gearboxes immediately"],a:"C"},
+  {id:10,d:"AI & Machine Learning",q:"How does an AI model for quality inspection 'learn' to detect defects?",o:["It is programmed with rules for every possible defect","It learns by analysing thousands of past data records and images","It randomly checks products","It copies what human inspectors do"],a:"B"},
+  {id:11,d:"Digital Twin",q:"What is a Digital Twin in manufacturing?",o:["A backup machine kept in storage","A real-time virtual replica of a machine or line, fed by sensor data","A printed copy of the machine manual","A second operator trained on the same machine"],a:"B"},
+  {id:12,d:"Cobots & Smart Tools",q:"What is the KEY difference between an industrial robot and a collaborative robot (cobot)?",o:["Cobots are faster than industrial robots","Cobots are designed to work safely alongside people without needing a safety cage","Industrial robots are cheaper","Cobots can only be used in blade manufacturing"],a:"B"},
+  {id:13,d:"Cobots & Smart Tools",q:"A smart torque wrench is used during nacelle hub bolt assembly. What happens to the torque data?",o:["The operator writes it on a paper traveller at end of shift","It is stored in the wrench and downloaded monthly","It is automatically captured and linked to the nacelle serial number in real time","The supervisor verbally confirms it at shift handover"],a:"C"},
+  {id:14,d:"Digital Work Instructions",q:"A Digital Work Instruction is described as 'step-gated.' What does this mean?",o:["The operator can complete steps in any order","Each step only unlocks after the previous step is confirmed complete","Only senior operators can access the instructions","Instructions are available only at the start of each shift"],a:"B"},
+  {id:15,d:"Digital Work Instructions",q:"After Digital Work Instructions were introduced at a nacelle harness station, first-time quality improved from 87% to 97%. What was the MOST LIKELY reason?",o:["Operators became more experienced over time","The number of operators was reduced","Step-by-step visual guidance eliminated missed steps and incorrect sequences","The harness design was simplified"],a:"C"},
+  {id:16,d:"Predictive Maintenance",q:"What is the KEY advantage of predictive maintenance over calendar-based maintenance?",o:["It is cheaper because parts are replaced more frequently","It allows you to act on actual machine health data before failure occurs","It eliminates the need for a maintenance team","It is based on fixed time intervals regardless of machine condition"],a:"B"},
+  {id:17,d:"Predictive Maintenance",q:"A blade infusion pump was replaced every 500 hours. After predictive monitoring was implemented, unplanned downtime fell by 61%. Why?",o:["The pump was replaced more often","Maintenance was done only when sensor data predicted a failure was approaching","The pump was replaced with a better model","Operators manually checked it more often"],a:"B"},
+  {id:18,d:"OT Cybersecurity",q:"A vendor wants to connect a laptop to a shopfloor PLC for a firmware update. What is the CORRECT action per OT security protocol?",o:["Allow it immediately — vendor engineers are always trusted","Let the operator decide based on experience","Pre-approve, log, network-isolate, and supervise the connection","It is fine as long as the vendor is well known"],a:"C"},
+  {id:19,d:"Cautionary Tales",q:"Kodak invented the digital camera in 1975 but filed for bankruptcy in 2012. What is the KEY lesson for manufacturing companies?",o:["Cameras are not a good business","A dominant company can fail if it refuses to adopt new technology out of fear of disrupting its own business","Digital cameras are not useful","Bankruptcy is inevitable for old companies"],a:"B"},
+  {id:20,d:"Suzlon Context",q:"Which statement BEST explains why Industry 4.0 matters specifically for Suzlon?",o:["It allows us to reduce the number of workers in the plant","Wind turbines run for 20+ years — digital manufacturing builds better quality, full traceability, and enables predictive field maintenance","It is a government requirement for all factories","It is only useful for blade manufacturing, not nacelle or tower"],a:"B"},
+];
+
+const ANS = {}; QS.forEach(q=>{ ANS[q.id]=q.a; });
+const LS = ['A','B','C','D'];
+
+// ── STATE ────────────────────────────────────────────────────────────────
+let P={}, answers={}, curQ=0, lastRecord=null, adminOk=false;
+let allResults=[];
+
+// Check config
+if(SCRIPT_URL==='https://script.google.com/macros/s/AKfycbzTT7qae13-YsDNLpba_IJiteTv1ZfT3y3Qfwjh81nT12dMKLyFjcNbcBRS2RD_l06uyw/exec'){
+  document.getElementById('configWarn').style.display='block';
+}
+
+// ── SCREEN HELPER ────────────────────────────────────────────────────────
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const s=document.getElementById(id);
+  if(s)s.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── REGISTRATION ─────────────────────────────────────────────────────────
+function startQuiz(){
+  const name=document.getElementById('fName').value.trim();
+  const empId=document.getElementById('fEmpId').value.trim();
+  const dept=document.getElementById('fDept').value;
+  if(!name){alert('Please enter your full name.');return;}
+  if(!empId){alert('Please enter your Employee ID.');return;}
+  if(!dept){alert('Please select your function.');return;}
+  P={name,empId,dept,plant:document.getElementById('fPlant').value.trim()||'Not specified',startTime:new Date().toISOString()};
+  curQ=0; answers={};
+  buildDots(); renderQ(); show('scrQuiz');
+}
+
+// ── QUIZ ENGINE ──────────────────────────────────────────────────────────
+function buildDots(){
+  document.getElementById('dotsRow').innerHTML=
+    QS.map((_,i)=>`<div class="dot" id="d${i}" onclick="goToQ(${i})"></div>`).join('');
+}
+function renderQ(){
+  const q=QS[curQ];
+  document.getElementById('qProg').style.width=Math.round((curQ/QS.length)*100)+'%';
+  document.getElementById('qCtr').textContent=`${curQ+1} / ${QS.length}`;
+  document.getElementById('qDom').textContent=q.d;
+  document.getElementById('qTxt').textContent=q.q;
+  const oc=document.getElementById('qOpts');
+  oc.innerHTML='';
+  q.o.forEach((o,i)=>{
+    const b=document.createElement('button');
+    b.className='opt'+(answers[q.id]===LS[i]?' selected':'');
+    b.innerHTML=`<span class="opt-badge">${LS[i]}</span><span>${o}</span>`;
+    b.onclick=()=>pick(q.id,LS[i]);
+    oc.appendChild(b);
+  });
+  document.getElementById('btnPrev').style.visibility=curQ===0?'hidden':'visible';
+  document.getElementById('btnNext').textContent=curQ<QS.length-1?'Next →':'Review Answers';
+  updateDots();
+}
+function pick(qid,l){
+  answers[qid]=l;
+  document.querySelectorAll('.opt').forEach((b,i)=>{
+    const s=LS[i]===l;
+    b.classList.toggle('selected',s);
+    const bd=b.querySelector('.opt-badge');
+    bd.style.background=s?'var(--G)':'';
+    bd.style.color=s?'#fff':'';
+    bd.style.borderColor=s?'var(--G)':'';
+  });
+  updateDots();
+}
+function updateDots(){
+  QS.forEach((_,i)=>{
+    const d=document.getElementById('d'+i);
+    if(!d)return;
+    d.className='dot'+(i===curQ?' current':answers[QS[i].id]?' done':'');
+  });
+}
+function nextQ(){
+  if(curQ<QS.length-1){curQ++;renderQ();window.scrollTo(0,0);}
+  else showReview();
+}
+function prevQ(){if(curQ>0){curQ--;renderQ();window.scrollTo(0,0);}}
+function goToQ(i){curQ=i;renderQ();show('scrQuiz');}
+
+// ── REVIEW ───────────────────────────────────────────────────────────────
+function showReview(){
+  const unan=QS.filter(q=>!answers[q.id]);
+  const g=document.getElementById('rvGrid');
+  g.innerHTML='';
+  QS.forEach((q,i)=>{
+    const ok=!!answers[q.id];
+    const d=document.createElement('div');
+    d.className='rv-item '+(ok?'ok':'miss');
+    d.innerHTML=`<div class="rv-qn">Q${q.id}</div><div class="rv-ans">${answers[q.id]||'—'}</div>`;
+    d.onclick=()=>goToQ(i);
+    g.appendChild(d);
+  });
+  const ws=document.getElementById('warnStrip');
+  if(unan.length){ws.style.display='block';ws.textContent=`⚠ ${unan.length} question${unan.length>1?'s':''} unanswered — tap a red box to go back`;}
+  else ws.style.display='none';
+  show('scrReview');
+}
+
+// ── SUBMIT ───────────────────────────────────────────────────────────────
+function doSubmit(){
+  show('scrSubmit');
+  // Score locally
+  let score=0;
+  const domMap={};
+  QS.forEach(q=>{
+    if(!domMap[q.d])domMap[q.d]={c:0,t:0};
+    domMap[q.d].t++;
+    if(answers[q.id]===ANS[q.id]){score++;domMap[q.d].c++;}
+  });
+  lastRecord={...P,score,total:QS.length,answers:{...answers},domainScores:domMap,submitTime:new Date().toISOString()};
+  sendToSheet(lastRecord);
+}
+
+function sendToSheet(rec){
+  const payload={
+    action:'submit',
+    name:rec.name,
+    empId:rec.empId,
+    dept:rec.dept,
+    plant:rec.plant,
+    score:rec.score,
+    total:rec.total,
+    pct:Math.round((rec.score/rec.total)*100),
+    award:getAward(rec.score,rec.total).short,
+    submitTime:rec.submitTime,
+    answers:JSON.stringify(rec.answers),
+    domainScores:JSON.stringify(rec.domainScores)
+  };
+  fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok') showThankYou();
+      else showError('Server returned an error. Please try again.');
+    })
+    .catch(()=>{
+      // Fallback: try GET with URL params for CORS issues
+      const params=new URLSearchParams(payload).toString();
+      fetch(`${SCRIPT_URL}?${params}`)
+        .then(r=>r.json())
+        .then(d=>{ if(d.status==='ok') showThankYou(); else showError('Could not save your answers. Please try again.'); })
+        .catch(()=>showError('No internet connection. Please check WiFi and try again.'));
+    });
+}
+
+function retrySubmit(){if(lastRecord)sendToSheet(lastRecord);}
+
+function showThankYou(){
+  document.getElementById('tyName').textContent=P.name+' · '+P.dept;
+  show('scrThank');
+}
+function showError(msg){
+  document.getElementById('errMsg').textContent=msg;
+  show('scrError');
+}
+
+// ── AWARDS ───────────────────────────────────────────────────────────────
+function getAward(score,total){
+  const p=score/total;
+  if(p>=0.9)return{label:'🥇 Gold — Digital Champion',cls:'ag',short:'🥇 Gold'};
+  if(p>=0.75)return{label:'🥈 Silver — Digital Leader',cls:'as',short:'🥈 Silver'};
+  if(p>=0.55)return{label:'🥉 Bronze — Digital Learner',cls:'ab',short:'🥉 Bronze'};
+  return{label:'📚 Priority Training',cls:'al',short:'📚 Training'};
+}
+
+// ── ADMIN ────────────────────────────────────────────────────────────────
+function openAdmin(){
+  if(adminOk){switchTab('results');return;}
+  show('scrAdminGate');
+}
+function checkPass(){
+  const v=document.getElementById('passInp').value;
+  if(v===ADMIN_PASS){
+    adminOk=true;
+    document.getElementById('botNav').classList.add('show');
+    adminLoad();
+    switchTab('results');
+  } else {
+    document.getElementById('gateErr').style.display='block';
+    document.getElementById('passInp').value='';
+  }
+}
+function switchTab(tab){
+  document.getElementById('bnResults').className='bn'+(tab==='results'?' active':'');
+  document.getElementById('bnWinners').className='bn'+(tab==='winners'?' active':'');
+  if(tab==='results'){show('scrAdmin');document.getElementById('botNav').classList.add('show');}
+  else{renderWinners();show('scrWinners');document.getElementById('botNav').classList.add('show');}
+}
+
+function adminLoad(){
+  document.getElementById('aUpd').textContent='· Loading…';
+  fetch(`${SCRIPT_URL}?action=read&pass=${encodeURIComponent(SHEET_PASS)}`)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'){
+        allResults=d.data||[];
+        allResults.sort((a,b)=>b.score-a.score);
+        renderAdmin();
+        document.getElementById('aUpd').textContent='· '+new Date().toLocaleTimeString();
+      } else {
+        document.getElementById('aUpd').textContent='· Error loading';
+      }
+    })
+    .catch(()=>{ document.getElementById('aUpd').textContent='· Network error'; });
+}
+
+function renderAdmin(){
+  const data=allResults;
+  const n=data.length;
+  document.getElementById('aSub').textContent=n;
+  document.getElementById('aAvg').textContent=n?( data.reduce((s,r)=>s+Number(r.score),0)/n ).toFixed(1):'—';
+  document.getElementById('aGold').textContent=data.filter(r=>r.score/r.total>=0.9).length;
+  document.getElementById('aSilver').textContent=data.filter(r=>r.score/r.total>=0.75&&r.score/r.total<0.9).length;
+  document.getElementById('aBronze').textContent=data.filter(r=>r.score/r.total>=0.55&&r.score/r.total<0.75).length;
+  document.getElementById('aTrain').textContent=data.filter(r=>r.score/r.total<0.55).length;
+
+  // Leaderboard
+  const lb=document.getElementById('lbList');
+  if(!n){
+    lb.innerHTML=`<div class="empty"><span class="empty-i">⏳</span><h3>Waiting for submissions</h3><p>Results appear here as participants submit. Tap ↻ to refresh.</p></div>`;
+  } else {
+    const ri=['🥇','🥈','🥉'];
+    lb.innerHTML=data.map((r,i)=>{
+      const aw=getAward(Number(r.score),Number(r.total));
+      const pct=Math.round((r.score/r.total)*100);
+      const t=new Date(r.submitTime).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+      return`<div class="lb-card" onclick="showDetail(${i})">
+        <div class="lb-rank">${ri[i]||i+1}</div>
+        <div class="lb-info">
+          <div class="lb-name">${r.name}</div>
+          <div class="lb-dept">${r.dept} · ${r.plant} · ${r.empId}</div>
+        </div>
+        <div class="lb-right">
+          <div class="lb-score">${r.score}/${r.total}</div>
+          <div class="lb-meta">${pct}% · ${t}</div>
+          <div class="lb-aw ${aw.cls}">${aw.short}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // Domain averages
+  const domT={};
+  data.forEach(r=>{
+    if(!r.domainScores)return;
+    let ds;
+    try{ds=typeof r.domainScores==='string'?JSON.parse(r.domainScores):r.domainScores;}catch(e){return;}
+    Object.entries(ds).forEach(([d,s])=>{
+      if(!domT[d])domT[d]={c:0,t:0};
+      domT[d].c+=Number(s.c||s.correct||0);
+      domT[d].t+=Number(s.t||s.total||0);
+    });
+  });
+  const dl=document.getElementById('domList');
+  if(!Object.keys(domT).length){dl.innerHTML='';return;}
+  dl.innerHTML=Object.entries(domT).map(([d,s])=>{
+    const p=s.t?Math.round((s.c/s.t)*100):0;
+    const col=p>=70?'var(--G)':p>=50?'var(--AMB)':'var(--RED)';
+    return`<div class="dl-row">
+      <div class="dl-top"><span>${d}</span><span style="font-weight:700;color:${col}">${p}%</span></div>
+      <div class="dl-bar"><div class="dl-fill" style="width:${p}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function showDetail(i){
+  const r=allResults[i];
+  document.getElementById('mNm').textContent=r.name;
+  document.getElementById('mSb').textContent=`${r.dept} · ${r.plant} · ${r.empId} · Score: ${r.score}/${r.total}`;
+  let ans={};
+  try{ans=typeof r.answers==='string'?JSON.parse(r.answers):r.answers;}catch(e){}
+  let h='';
+  QS.forEach(q=>{
+    const gv=ans[q.id]||'—';
+    const ok=gv===ANS[q.id];
+    h+=`<div class="ag-cell ${ok?'c':'w'}">
+      <div class="ag-qn">Q${q.id}</div>
+      <div class="ag-gv">${gv}</div>
+      <div class="ag-ck">${ok?'✓':'→'+ANS[q.id]}</div>
+    </div>`;
+  });
+  document.getElementById('mGrid').innerHTML=h;
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open');}
+
+function renderWinners(){
+  const data=allResults.slice(0,3);
+  const body=document.getElementById('winBody');
+  if(!data.length){
+    body.innerHTML=`<div class="empty" style="margin-top:20px"><span class="empty-i">🏆</span><h3>No submissions yet</h3><p>Winners will appear here once participants submit. Tap ↻ to refresh.</p></div>`;
+    return;
+  }
+  const M=['🥇','🥈','🥉'];
+  const AN=['Digital Champion','Digital Leader','Digital Learner'];
+  const COL=['#b8860b','#556677','#a05020'];
+  const BG=['#fef9c3','#e2e8f0','#fed7aa'];
+
+  let h=`<div style="text-align:center;padding:8px 0 22px">
+    <div style="font-size:12px;color:var(--INK3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px">Suzlon · Industry 4.0 Quiz</div>
+    <div style="font-size:22px;font-weight:800;color:var(--INK)">🎉 Top 3 Winners</div>
+  </div>`;
+
+  data.forEach((r,i)=>{
+    const pct=Math.round((r.score/r.total)*100);
+    h+=`<div style="background:var(--CARD);border:2px solid ${BG[i]};border-radius:16px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-8px;top:-8px;font-size:60px;opacity:.08;line-height:1">${M[i]}</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="font-size:42px;flex:none">${M[i]}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${COL[i]};margin-bottom:3px">#${i+1} · ${AN[i]}</div>
+          <div style="font-size:19px;font-weight:800;color:var(--INK);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.name}</div>
+          <div style="font-size:12.5px;color:var(--INK3);margin-top:3px">${r.dept} · ${r.empId}</div>
+        </div>
+        <div style="text-align:right;flex:none">
+          <div style="font-size:30px;font-weight:800;color:var(--G);line-height:1">${r.score}</div>
+          <div style="font-size:11px;color:var(--INK3)">/ ${r.total}</div>
+          <div style="font-size:13px;font-weight:700;color:${COL[i]}">${pct}%</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  if(allResults.length>3){
+    h+=`<div style="background:var(--SUR2);border-radius:12px;overflow:hidden;margin-top:8px">
+      <div style="padding:12px 14px;font-size:12px;color:var(--INK3);border-bottom:1px solid var(--BOR);font-weight:600;text-transform:uppercase;letter-spacing:.07em">All Participants</div>`;
+    allResults.forEach((r,i)=>{
+      const aw=getAward(Number(r.score),Number(r.total));
+      h+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:${i<allResults.length-1?'1px solid var(--BOR)':'none'}">
+        <div style="font-size:15px;flex:none;width:24px;text-align:center">${['🥇','🥈','🥉'][i]||i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${r.name}</div>
+          <div style="font-size:11px;color:var(--INK3)">${r.dept}</div>
+        </div>
+        <div style="text-align:right;flex:none">
+          <div style="font-weight:800;font-size:15px;color:var(--G)">${r.score}/${r.total}</div>
+          <div class="lb-aw ${aw.cls}" style="font-size:9.5px">${aw.short}</div>
+        </div>
+      </div>`;
+    });
+    h+='</div>';
+  }
+  body.innerHTML=h;
+}
+
+function exportCSV(){
+  if(!allResults.length){alert('No data yet.');return;}
+  const hdrs=['Rank','Name','Employee ID','Department','Plant','Score','Out of','Percentage','Award','Submit Time'];
+  const rows=allResults.map((r,i)=>{
+    const pct=Math.round((r.score/r.total)*100);
+    const aw=getAward(Number(r.score),Number(r.total)).label.replace(/[🥇🥈🥉📚]/g,'').trim();
+    return[i+1,r.name,r.empId,r.dept,r.plant,r.score,r.total,pct+'%',aw,new Date(r.submitTime).toLocaleString()];
+  });
+  const csv=[hdrs,...rows].map(row=>row.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='Suzlon_Quiz_Results_'+new Date().toLocaleDateString().replace(/\//g,'-')+'.csv';
+  a.click();
+}
+
+function clearSheet(){
+  if(!confirm('Clear ALL data from the Google Sheet? This cannot be undone.'))return;
+  fetch(`${SCRIPT_URL}?action=clear&pass=${encodeURIComponent(SHEET_PASS)}`)
+    .then(r=>r.json())
+    .then(()=>{allResults=[];renderAdmin();})
+    .catch(()=>alert('Could not clear. Try again.'));
+}
+
+// Auto-refresh admin every 25s
+setInterval(()=>{
+  if(adminOk&&(document.getElementById('scrAdmin').classList.contains('active')||document.getElementById('scrWinners').classList.contains('active')))
+    adminLoad();
+},25000);
+</script>
+</body>
+</html>
