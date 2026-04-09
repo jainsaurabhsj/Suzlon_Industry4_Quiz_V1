@@ -267,9 +267,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:
 <body>
 
 <!-- ══ CONFIG BANNER (shown if script URL not set) ══════════ -->
-<div class="config-warn" id="configWarn">
-  ⚠ SETUP NEEDED: Apps Script URL not configured. See setup guide.
-</div>
+<!-- config-warn removed: URL is configured -->
 
 <!-- ══ LANDING ════════════════════════════════════════════════ -->
 <div class="screen active" id="scrLand">
@@ -499,9 +497,7 @@ let P={}, answers={}, curQ=0, lastRecord=null, adminOk=false;
 let allResults=[];
 
 // Check config
-if(SCRIPT_URL==='https://script.google.com/macros/s/AKfycbzTT7qae13-YsDNLpba_IJiteTv1ZfT3y3Qfwjh81nT12dMKLyFjcNbcBRS2RD_l06uyw/exec'){
-  document.getElementById('configWarn').style.display='block';
-}
+// Script URL configured — no warning needed
 
 // ── SCREEN HELPER ────────────────────────────────────────────────────────
 function show(id){
