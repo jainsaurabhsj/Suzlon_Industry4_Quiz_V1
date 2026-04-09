@@ -268,7 +268,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:
 
 <!-- ══ CONFIG BANNER (shown if script URL not set) ══════════ -->
 <div class="config-warn" id="configWarn">
- ⚠ SETUP NEEDED: Replace https://jainsaurabhsj.github.io/Suzlon_Industry4_Quiz_V1/ in this file with your Apps Script URL. See setup guide.
+  ⚠ SETUP NEEDED: Apps Script URL not configured. See setup guide.
 </div>
 
 <!-- ══ LANDING ════════════════════════════════════════════════ -->
@@ -463,7 +463,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:
 // ╔══════════════════════════════════════════════════════════════╗
 // ║  CONFIGURATION — CHANGE THIS BEFORE GOING LIVE              ║
 // ╚══════════════════════════════════════════════════════════════╝
-const SCRIPT_URL = 'https://jainsaurabhsj.github.io/Suzlon_Industry4_Quiz_V1/'; // ← Replace with your Apps Script URL
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzTT7qae13-YsDNLpba_IJiteTv1ZfT3y3Qfwjh81nT12dMKLyFjcNbcBRS2RD_l06uyw/exec'; // ← Replace with your Apps Script URL
 const ADMIN_PASS = '4suzlon';            // ← Change to your preferred password
 const SHEET_PASS = 'adminsuzlon';        // ← Sheet read password (set same in Apps Script)
 
@@ -499,7 +499,7 @@ let P={}, answers={}, curQ=0, lastRecord=null, adminOk=false;
 let allResults=[];
 
 // Check config
-if(SCRIPT_URL==='https://jainsaurabhsj.github.io/Suzlon_Industry4_Quiz_V1/'){
+if(SCRIPT_URL==='https://script.google.com/macros/s/AKfycbzTT7qae13-YsDNLpba_IJiteTv1ZfT3y3Qfwjh81nT12dMKLyFjcNbcBRS2RD_l06uyw/exec'){
   document.getElementById('configWarn').style.display='block';
 }
 
